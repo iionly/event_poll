@@ -1,4 +1,5 @@
 <?php
+
 // generate a list of filter tabs
 // TODO: adapt this for event polls
 $filter_context = $vars['filter'];

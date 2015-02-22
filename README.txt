@@ -1,1 +1,1 @@
-First commit - extends some event calendar functionality.
+Allows polling user for event dates and times.

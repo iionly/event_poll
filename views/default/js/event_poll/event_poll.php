@@ -98,26 +98,26 @@ elgg.event_poll.deleteCell = function(e) {
 elgg.event_poll.handleDayClick = function(date) {
 	var stage = $('#event-poll-stage').val();
 	if (stage == 1) {
-	    var h = '<div class="event-poll-date-options">';
-	    h += '<a class="event-poll-date-option1-remove" href="javascript:void(0);"><span class="elgg-icon elgg-icon-delete "></span></a>';
-	    h += '<span class="event-poll-human-date">'+elgg.event_poll.formatDate(date)+'</span>';
-	    h += '<span class="event-poll-iso-date">'+elgg.event_poll.getISODate(date)+'</span>';
-	    h += '<span class="event-poll-click-id">'+click_id+'</span>';
-	    h += '</div>';
-	    $('#event-poll-date-container').addClass('event-poll-date-alert');
-	    setTimeout(function() {$('#event-poll-date-container').removeClass('event-poll-date-alert');},250);
-	    $('#event-poll-date-wrapper').append(h);
+		var h = '<div class="event-poll-date-options">';
+		h += '<a class="event-poll-date-option1-remove" href="javascript:void(0);"><span class="elgg-icon elgg-icon-delete "></span></a>';
+		h += '<span class="event-poll-human-date">'+elgg.event_poll.formatDate(date)+'</span>';
+		h += '<span class="event-poll-iso-date">'+elgg.event_poll.getISODate(date)+'</span>';
+		h += '<span class="event-poll-click-id">'+click_id+'</span>';
+		h += '</div>';
+		$('#event-poll-date-container').addClass('event-poll-date-alert');
+		setTimeout(function() {$('#event-poll-date-container').removeClass('event-poll-date-alert');},250);
+		$('#event-poll-date-wrapper').append(h);
 
-	    elgg.event_poll.addEventPollOptionToCalendar(date);
-	}   
+		elgg.event_poll.addEventPollOptionToCalendar(date);
+	}
 };
 
 elgg.event_poll.addEventPollOptionToCalendar = function(date) {
-    var guid = $('#event-poll-event-guid').val();
-    var lgth_m = parseInt($('#event-poll-length-minute').val());
+	var guid = $('#event-poll-event-guid').val();
+	var lgth_m = parseInt($('#event-poll-length-minute').val());
 	var lgth_h = parseInt($('#event-poll-length-hour').val());
-    var end_date = new Date(date.getTime()+1000*(lgth_h*60*60+lgth_m*60));
-    var event_item = {
+	var end_date = new Date(date.getTime()+1000*(lgth_h*60*60+lgth_m*60));
+	var event_item = {
 		id: guid,
 		guid: guid,
 		click_id: click_id,
@@ -127,9 +127,9 @@ elgg.event_poll.addEventPollOptionToCalendar = function(date) {
 		end : end_date.getTime()/1000,
 		className: 'event-poll-new-class',
 		allDay: false
-    };
-    $('#calendar').fullCalendar('renderEvent',event_item,true);
-    click_id += 1;
+	};
+	$('#calendar').fullCalendar('renderEvent',event_item,true);
+	click_id += 1;
 }
 
 elgg.event_poll.handleEventClick = function(event,e) {
@@ -146,10 +146,10 @@ elgg.event_poll.handleEventClick = function(event,e) {
 		$('#calendar').fullCalendar('removeEvents', function(event) { return event.click_id == click_id; });
 		return false;
 	} else {
-	    if (event.url) {
-	        $.fancybox({'href':event.url});
-	        return false;
-	    }
+		if (event.url) {
+			$.fancybox({'href':event.url});
+			return false;
+		}
 	}
 };
 
@@ -169,8 +169,7 @@ elgg.event_poll.formatDate = function(date) {
 			t = h+":"+mf+" am";
 		} else {
 			t = (h-12)+":"+mf+" pm";
-		}		
-		
+		}
 	} else {
 		t = h+":"+mf;
 	}
@@ -192,7 +191,7 @@ elgg.event_poll.formatDate = function(date) {
 				t2 = h2+":"+mf2+" am";
 			} else {
 				t2 = (h2-12)+":"+mf2+" pm";
-			}			
+			}
 		} else {
 			t2 = h2+":"+mf2;
 		}
@@ -238,8 +237,7 @@ elgg.event_poll.handleGetEvents = function(start, end, callback) {
 	var start_date = elgg.event_poll.getISODate(start);
 	var end_date = elgg.event_poll.getISODate(end);
 	var url = "event_calendar/get_fullcalendar_events/"+start_date+"/"+end_date+"/all/<?php echo $vars['group_guid']; ?>";
-	elgg.getJSON(url, {success: 
-		function(events) {
+	elgg.getJSON(url, {success: function(events) {
 			var guid = $('#event-poll-event-guid').val();
 			$.each(events,function(k,e) {if (e.guid == guid) { e.className = 'event-poll-new-class'; }});
 			callback(events);
@@ -294,21 +292,19 @@ elgg.event_poll.createEventObject = function() {
 		}
 		nobj['times_array'] = ta;
 		event_polls.push(nobj);
-	} 
+	}
 }
 
 elgg.event_poll.getKeys = function(obj)  {
 	var keys = [];
 
-    for(var key in obj)
-    {
-        if(obj.hasOwnProperty(key))
-        {
-            keys.push(key);
-        }
-    }
+	for(var key in obj) {
+		if(obj.hasOwnProperty(key)) {
+			keys.push(key);
+		}
+	}
 
-    return keys;	
+	return keys;
 }
 
 elgg.event_poll.handleStage2 = function(e) {
@@ -327,22 +323,22 @@ elgg.event_poll.handleStage2 = function(e) {
 	// add the data rows
 	$('.event-poll-date-options').each(elgg.event_poll.insertTableRow);
 	// get the times dropdown and populate the table with it
-    elgg.get('event_poll/get_times_dropdown', {success: elgg.event_poll.populateTimesDropdowns});
-    $('#event-poll-next-button').hide();
-    $('#event-poll-next2-button').show();
-    $('#event-poll-back-button').show();
-    $('#event-poll-back2-button').hide();
-    $('#event-poll-send-button').hide();
-    $('#event-poll-title1').hide();
-    $('#event-poll-title2').show();
-    $('#event-poll-title3').hide();
-    $('#event-poll-stage').val(2);
-    $('#event-poll-date-container').hide();
-    $('#event-poll-date-times-table-wrapper').show();
-    $('#event-poll-date-times-table-read-only-wrapper').hide();
-    $('#event-poll-stage3-wrapper').hide();
- 	// show calendar
-    $('#calendar').show();
+	elgg.get('event_poll/get_times_dropdown', {success: elgg.event_poll.populateTimesDropdowns});
+	$('#event-poll-next-button').hide();
+	$('#event-poll-next2-button').show();
+	$('#event-poll-back-button').show();
+	$('#event-poll-back2-button').hide();
+	$('#event-poll-send-button').hide();
+	$('#event-poll-title1').hide();
+	$('#event-poll-title2').show();
+	$('#event-poll-title3').hide();
+	$('#event-poll-stage').val(2);
+	$('#event-poll-date-container').hide();
+	$('#event-poll-date-times-table-wrapper').show();
+	$('#event-poll-date-times-table-read-only-wrapper').hide();
+	$('#event-poll-stage3-wrapper').hide();
+	// show calendar
+	$('#calendar').show();
 	e.preventDefault();
 }
 
@@ -356,30 +352,30 @@ elgg.event_poll.handleStage3 = function(e) {
 	$('#event-poll-stage1-wrapper').hide();
 	$('#event-poll-send-button').hide();
 
-	// show read-only table	
+	// show read-only table
 	$('#event-poll-date-times-table-read-only-wrapper').show();
-    $('#event-poll-date-times-table-wrapper').hide();
+	$('#event-poll-date-times-table-wrapper').hide();
 
-    // hide calendar
-    $('#calendar').hide();
+	// hide calendar
+	$('#calendar').hide();
 
-    // show title
+	// show title
 	$('#event-poll-title1').hide();
-    $('#event-poll-title2').hide();
-    $('#event-poll-title3').show();
+	$('#event-poll-title2').hide();
+	$('#event-poll-title3').show();
 
-    // show invitation form
-    $('#event-poll-stage3-wrapper').show();
+	// show invitation form
+	$('#event-poll-stage3-wrapper').show();
 
-    // show buttons
-    $('#event-poll-next-button').hide();
-    $('#event-poll-back-button').hide();
-    $('#event-poll-back2-button').show();
-    $('#event-poll-send-button').show();
+	// show buttons
+	$('#event-poll-next-button').hide();
+	$('#event-poll-back-button').hide();
+	$('#event-poll-back2-button').show();
+	$('#event-poll-send-button').show();
 
-    // set stage
+	// set stage
 	$('#event-poll-stage').val(3);
-	
+
 	e.preventDefault();
 }
 
@@ -404,33 +400,33 @@ elgg.event_poll.insertReadOnlyTableRow = function(index,item) {
 	var human = item['human_date'];
 	var times = item['times_array'];
 	var t = '<tr class="event-poll-readonly-table-row">';
-    t += '<td>';
-    t += '<span class="event-poll-human-date">'+human+'</span>';
-    t += '</td>';
-    $.each(times,
-    	function (index,time) {
-    		t += '<td class="event-poll-time-readonly">'+time['human_time']+'</td>';
-    	}
-    );
-    t += '</tr>';
-    $('#event-poll-readonly-table').append(t);
+	t += '<td>';
+	t += '<span class="event-poll-human-date">'+human+'</span>';
+	t += '</td>';
+	$.each(times,
+		function (index,time) {
+			t += '<td class="event-poll-time-readonly">'+time['human_time']+'</td>';
+		}
+	);
+	t += '</tr>';
+	$('#event-poll-readonly-table').append(t);
 }
 
 elgg.event_poll.handleStage1 = function(e) {
 	$('#event-poll-back2-button').hide();
-    $('#event-poll-send-button').hide();
+	$('#event-poll-send-button').hide();
 	$('#event-poll-next-button').show();
-    $('#event-poll-next2-button').hide();
-    $('#event-poll-back-button').hide();
-    $('#event-poll-title1').show();
-    $('#event-poll-title2').hide();
-    $('#event-poll-title3').hide();
-    $('#event-poll-stage').val(1);
-    $('#event-poll-date-container').show();
-    $('#calendar').show();
-    $('#event-poll-date-times-table-wrapper').hide();
-    $('#event-poll-stage3-wrapper').hide();
-    $('#event-poll-stage1-wrapper').show();
+	$('#event-poll-next2-button').hide();
+	$('#event-poll-back-button').hide();
+	$('#event-poll-title1').show();
+	$('#event-poll-title2').hide();
+	$('#event-poll-title3').hide();
+	$('#event-poll-stage').val(1);
+	$('#event-poll-date-container').show();
+	$('#calendar').show();
+	$('#event-poll-date-times-table-wrapper').hide();
+	$('#event-poll-stage3-wrapper').hide();
+	$('#event-poll-stage1-wrapper').show();
 	e.preventDefault();
 }
 
@@ -448,11 +444,11 @@ elgg.event_poll.handleChangeLength = function(e) {
 	// add event polls back to calendar with corrected times
 	$.each(event_polls,elgg.event_poll.insertEventPollOption);
 	click_id = save_click_id;
-	
 }
+
 elgg.event_poll.insertEventPollOption = function(key,value) {
 	var times = value['times_array'];
-	var iso_date = value['iso_date'];	
+	var iso_date = value['iso_date'];
 	var date_bits = iso_date.split('-');
 	for (var i = 0; i < times.length; i++) {
 		var minutes = times[i]['minutes'];
@@ -465,12 +461,12 @@ elgg.event_poll.insertTableRow = function(index) {
 	var human = $(this).find('.event-poll-human-date').html();
 	var iso = $(this).find('.event-poll-iso-date').html();
 	var t = '<tr class="event-poll-date-times-table-row">';
-    t += '<td>';
+	t += '<td>';
 	t += '<a class="event-poll-date-option2-remove" href="javascript:void(0);"><span class="elgg-icon elgg-icon-delete "></span></a>';
-    t += '<span class="event-poll-human-date">'+human+'</span><span class="event-poll-iso-date">'+iso+'</span></td>';
-    t += '<td class="event-poll-times-dropdown"></td><td class="event-poll-times-dropdown"></td><td class="event-poll-times-dropdown"></td>';
-    t += '</tr>';
-    $('#event-poll-date-times-table').append(t);
+	t += '<span class="event-poll-human-date">'+human+'</span><span class="event-poll-iso-date">'+iso+'</span></td>';
+	t += '<td class="event-poll-times-dropdown"></td><td class="event-poll-times-dropdown"></td><td class="event-poll-times-dropdown"></td>';
+	t += '</tr>';
+	$('#event-poll-date-times-table').append(t);
 }
 
 elgg.event_poll.insertDateDiv = function(key,value) {
@@ -491,7 +487,7 @@ elgg.event_poll.setSelectValuesForRow = function() {
 			$($(this).find('[name="event_poll_time"]')).each(
 				function (index) {
 					var time = event_polls[i]['times_array'][index]['minutes'];
-					$(this).val(time);				
+					$(this).val(time);
 				}
 			);
 		}
@@ -529,10 +525,10 @@ elgg.event_poll.removeOption2 = function(e) {
 }
 
 elgg.event_poll.sendPoll = function(e) {
-	d = {	guid : $('#event-poll-event-guid').val(), 
+	d = {	guid : $('#event-poll-event-guid').val(),
 			subject : $('[name="invitation_subject"]').val(),
 			body : $('[name="invitation_body"]').val(),
-			invitees : $('input[name="members[]"]').map(function(){return $(this).val();}).get()	
+			invitees : $('input[name="members[]"]').map(function(){return $(this).val();}).get()
 	};
 	elgg.action('event_poll/invite', {data: d, success: elgg.event_poll.sendPollResponse});
 	//$('input[name="members[]"]').parent().remove();

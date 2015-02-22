@@ -26,7 +26,7 @@
 }
 
 .event-poll-date-times-table-date {
- 	width: 200px;
+	width: 200px;
 }
 
 .event-poll-date-times-table-time {
@@ -137,10 +137,10 @@
 
 .event-poll-listing-header-subject, .event-poll-listing-header-date, 
 	.event-poll-listing-header-requester, .event-poll-listing-header-responded, .event-poll-listing-header-delete {
- 	border-top: 1px solid #AAAAAA;
- 	font-weight: bold;
- 	font-size: 1.1em;
- }
+	border-top: 1px solid #AAAAAA;
+	font-weight: bold;
+	font-size: 1.1em;
+}
 
 .event-poll-listing-header-requester, .event-poll-listing-requester {
 	float: left;

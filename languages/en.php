@@ -1,7 +1,6 @@
 <?php
-	
-$english = array(
 
+$english = array(
 	'event_poll:add_title' => 'Create scheduling poll',
 	'event_poll:edit_title' => 'Edit scheduling poll',
 	'event_poll:select_days:title' => "Click on calendar to select possible dates and times",
@@ -68,7 +67,5 @@ $english = array(
 	'event_poll:listing:header:delete' => "Delete",
 	'event_poll:delete' => "Delete event",
 	'event_poll:deleteconfirm' => "Are you sure that you want to delete this event?",
-
 );
-				
 add_translation("en",$english);
