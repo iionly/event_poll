@@ -14,7 +14,7 @@ function event_poll_init() {
 	$plugin_js = elgg_get_simplecache_url('js', 'event_poll/event_poll');
 	elgg_register_simplecache_view('js/event_poll/event_poll');
 	elgg_register_js('elgg.event_poll', $plugin_js);
-
+	
 	//add to the css
 	elgg_extend_view('css/elgg', 'event_poll/css');
 

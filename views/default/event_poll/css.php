@@ -169,6 +169,7 @@
 	text-align: center;
 	width: 50px;
 	padding-top: 1px;
+	padding-bottom: 1px;
 }
 
 .event-poll-listing-delete-inactive {

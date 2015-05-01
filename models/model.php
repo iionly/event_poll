@@ -8,6 +8,8 @@ function event_poll_get_page_content_vote($guid) {
 	// just in case a feature adds an image upload
 	$vars['enctype'] = 'multipart/form-data';
 
+	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
+
 	$body_vars = array();
 	$event = get_entity((int)$guid);
 	if (elgg_instanceof($event, 'object', 'event_calendar')) {
@@ -15,14 +17,12 @@ function event_poll_get_page_content_vote($guid) {
 		$body_vars['form_data'] = event_poll_prepare_vote_form_vars($event);
 		$event_container = get_entity($event->container_guid);
 		if (elgg_instanceof($event_container, 'group')) {
-			elgg_push_breadcrumb(elgg_echo('event_calendar:group_breadcrumb'), 'event_calendar/group/'.$event->container_guid);
-		} else {
-			elgg_push_breadcrumb(elgg_echo('event_calendar:show_events_title'), 'event_calendar/list');
+			elgg_push_breadcrumb($event_container->name, 'event_calendar/group/' . $event_container->getGUID());
 		}
 		elgg_push_breadcrumb($event->title, $event->getURL());
 
 		$title = elgg_echo('event_poll:vote_title');
-		elgg_push_breadcrumb(elgg_echo('event_poll:vote_title'));	
+		elgg_push_breadcrumb(elgg_echo('event_poll:vote_title'));
 		$content = elgg_view_form('event_poll/vote', $vars, $body_vars);
 	} else {
 		$content = elgg_echo('event_poll:error_event_poll_edit');
@@ -43,15 +43,15 @@ function event_poll_get_page_content_schedule($guid) {
 	// just in case a feature adds an image upload
 	$vars['enctype'] = 'multipart/form-data';
 
+	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
+
 	$body_vars = array();
 	$event = get_entity((int)$guid);
 	if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
 		$body_vars['event'] = $event;
 		$event_container = get_entity($event->container_guid);
 		if (elgg_instanceof($event_container, 'group')) {
-			elgg_push_breadcrumb(elgg_echo('event_calendar:group_breadcrumb'), 'event_calendar/group/'.$event->container_guid);
-		} else {
-			elgg_push_breadcrumb(elgg_echo('event_calendar:show_events_title'), 'event_calendar/list');
+			elgg_push_breadcrumb($event_container->name, 'event_calendar/group/' . $event_container->getGUID());
 		}
 		elgg_push_breadcrumb($event->title, $event->getURL());
 
@@ -81,6 +81,8 @@ function event_poll_get_page_content_edit($page_type,$guid) {
 	// just in case a feature adds an image upload
 	$vars['enctype'] = 'multipart/form-data';
 
+	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
+
 	$body_vars = array();
 	$event = get_entity((int)$guid);
 	if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
@@ -91,11 +93,9 @@ function event_poll_get_page_content_edit($page_type,$guid) {
 
 		$event_container = get_entity($event->container_guid);
 		if (elgg_instanceof($event_container, 'group')) {
-			elgg_push_breadcrumb(elgg_echo('event_calendar:group_breadcrumb'), 'event_calendar/group/'.$event->container_guid);
-		} else {
-			elgg_push_breadcrumb(elgg_echo('event_calendar:show_events_title'), 'event_calendar/list');
+			elgg_push_breadcrumb($event_container->name, 'event_calendar/group/' . $event_container->getGUID());
 		}
-		elgg_push_breadcrumb($event->title,$event->getURL());
+		elgg_push_breadcrumb($event->title, $event->getURL());
 
 		if ($page_type == 'edit') {
 			$title = elgg_echo('event_poll:edit_title');
@@ -342,7 +342,7 @@ HTML;
 		$content = elgg_echo('event_poll:listing:no_polls');
 	}
 
-	elgg_push_breadcrumb(elgg_echo('event_calendar:show_events_title'), 'event_calendar/list');
+	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
 	elgg_push_breadcrumb($title);
 
 	$params = array('title' => $title, 'content' => $content, 'filter_override' => $filter_override);
@@ -529,16 +529,10 @@ function event_poll_merge_poll_events($events, $start_time, $end_time) {
 
 function event_poll_handle_event_poll_add_items($group_guid = 0) {
 	if ($group_guid) {
-		$url_add_event =  "event_calendar/add/$group_guid";
 		$url_schedule_event =  "event_calendar/schedule/$group_guid";
 	} else {
-		$url_add_event =  "event_calendar/add";
 		$url_schedule_event =  "event_calendar/schedule";
 	}
-
-	$item = new ElggMenuItem('event-calendar-0add', elgg_echo('event_calendar:add_event'), $url_add_event);
-	$item->setSection('event_poll');
-	elgg_register_menu_item('page', $item);
 
 	$item = new ElggMenuItem('event-calendar-1schedule', elgg_echo('event_calendar:schedule_event'), $url_schedule_event);
 	$item->setSection('event_poll');

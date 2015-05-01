@@ -61,6 +61,7 @@ elgg.event_poll.setupCalendar = function() {
 			header: {
 				left: 'prev,next today',
 				center: 'title',
+				right: '',
 			},
 			defaultView: 'agendaWeek',
 			allDaySlot: false,
@@ -314,9 +315,9 @@ elgg.event_poll.handleStage2 = function(e) {
 	var tb = '<table id="event-poll-date-times-table"><tr>';
 	tb += '<th class="event-poll-date-times-table-date">&nbsp;</th>';
 	// TODO - make the number of time slots configurable
-	tb += '<th class="event-poll-date-times-table-time">Time 1</th>';
-	tb += '<th class="event-poll-date-times-table-time">Time 2</th>';
-	tb += '<th class="event-poll-date-times-table-time">Time 3</th>';
+	tb += '<th class="event-poll-date-times-table-time"><?php echo elgg_echo("event_poll:time1"); ?></th>';
+	tb += '<th class="event-poll-date-times-table-time"><?php echo elgg_echo("event_poll:time2"); ?></th>';
+	tb += '<th class="event-poll-date-times-table-time"><?php echo elgg_echo("event_poll:time3"); ?></th>';
 	tb += '</tr></table>';
 	// insert the new table
 	$('#event-poll-date-times-table-wrapper').prepend(tb);

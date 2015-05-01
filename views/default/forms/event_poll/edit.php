@@ -37,7 +37,7 @@ if (!$event_calendar_time_format) {
 
 <input type="hidden" id="event-poll-event-guid" value="<?php echo $event->guid; ?>" />
 <?php echo elgg_view('input/hidden', array('id' => 'event-poll-event-title','value'=>$event->title)); ?>
-<?php echo elgg_view('input/hidden', array('id' => 'event-poll-event-url','value' => elgg_get_site_url().'event_calendar/view_light_box/'.$event->guid)); ?>
+<?php echo elgg_view('input/hidden', array('id' => 'event-poll-event-url','value' => elgg_get_site_url().'ajax/view/event_calendar/popup?guid='.$event->guid)); ?>
 <input type="hidden" id="event-poll-month-number" value="<?php echo date('n')-1; ?>" />
 <input type="hidden" id="event-poll-hour-number" value="<?php echo date('G'); ?>" />
 <input type="hidden" id="event-poll-time-format" value="<?php echo $event_calendar_time_format; ?>" />
