@@ -1,6 +1,6 @@
 <?php
 
-$english = array(
+return array(
 	'event_poll:add_title' => 'Create scheduling poll',
 	'event_poll:edit_title' => 'Edit scheduling poll',
 	'event_poll:select_days:title' => "Click on calendar to select possible dates and times",
@@ -75,4 +75,3 @@ $english = array(
 	'event_calendar:schedule_event' => "Schedule event",
 	'event_calendar:list_polls' => "List event polls",
 );
-add_translation("en",$english);

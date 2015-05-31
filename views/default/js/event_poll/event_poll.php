@@ -170,7 +170,7 @@ elgg.event_poll.handleEventClick = function(event,e) {
 		return false;
 	} else {
 		if (event.url) {
-			$.fancybox({'href':event.url});
+			$.colorbox({'href':event.url});
 			return false;
 		}
 	}

@@ -136,13 +136,17 @@ function event_poll_send_invitations($guid, $subject, $body, $invitees) {
 		// to ensure that no former invitees remain that are no longer included after editing
 		remove_entity_relationships($guid, 'event_poll_invitation', true);
 
+		$sender_guid = elgg_get_logged_in_user_guid();
 		$body .= "\n\n" . elgg_get_site_url() . 'event_poll/vote/' . $guid;
 		if (is_array($invitees) && count($invitees) > 0) {
 			foreach($invitees as $user_guid) {
 				add_entity_relationship($user_guid, 'event_poll_invitation', $guid);
 			}
 			// email invitees
-			notify_user($invitees, elgg_get_logged_in_user_guid(), $subject, $body, null);
+			notify_user($invitees, $sender_guid, $subject, $body, array(), 'email');
+			foreach($invitees as $invitee) {
+				messages_send($subject, $body, $invitee, $sender_guid, 0, false, false);
+			}
 			return true;
 		}
 	}
@@ -322,7 +326,8 @@ function event_poll_get_page_content_list($filter) {
 	} else {
 		$title = elgg_echo('event_poll:list:title:show_friends');
 		$friendguids = array();
-		if ($friends = get_user_friends(elgg_get_logged_in_user_guid(), "", false, 0)) {
+		$logged_in_user = elgg_get_logged_in_user_entity();
+		if ($friends = $logged_in_user->getFriends(array('limit' => false))) {
 			foreach ($friends as $friend) {
 				$friendguids[] = $friend->getGUID();
 			}
@@ -406,8 +411,11 @@ function event_poll_vote($event, $message = '', $schedule_slot = '') {
 			}
 			add_entity_relationship($current_user->guid, 'event_poll_voted', $event->guid);
 			if ($message && $message != elgg_echo('event_poll:vote_message:explanation')) {
+				$sender_guid = elgg_get_logged_in_user_guid();
+				$subject = elgg_echo('event_poll:vote_message:subject', array($event->title));
 				$message = elgg_echo('event_poll:vote_message:top', array($current_user->name))."\n\n".$message;
-				notify_user($event->owner_guid, elgg_get_logged_in_user_guid(), elgg_echo('event_poll:vote_message:subject', array($event->title)), $message, null);
+				notify_user($event->owner_guid, $sender_guid, $subject, $message, array(), 'email');
+				messages_send($subject, $message, $event->owner_guid, $sender_guid, 0, false, false);
 			}
 		}
 		return true;
@@ -615,10 +623,14 @@ function event_poll_resend_invitations($event) {
 	foreach($invitees as $invitee) {
 		$guids[] = $invitee->guid;
 	}
+	$sender_guid = elgg_get_logged_in_user_guid();
 	$body .= "\n\n" . elgg_get_site_url() . 'event_poll/vote/' . $event->guid;
 	if (is_array($invitees) && count($invitees) > 0) {
 		// email invitees
-		notify_user($guids, elgg_get_logged_in_user_guid(), $subject, $body, null);
+		notify_user($guids, $sender_guid, $subject, $body, array(), 'email');
+		foreach($guids as $guid) {
+			messages_send($subject, $body, $guid, $sender_guid, 0, false, false);
+		}
 	}
 	return true;
 }

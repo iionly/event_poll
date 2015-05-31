@@ -1,6 +1,6 @@
 <?php
 
-$german = array(
+return array(
 	'event_poll:add_title' => 'Event-Terminabstimmung hinzufügen',
 	'event_poll:edit_title' => 'Event-Terminabstimmung bearbeiten',
 	'event_poll:select_days:title' => "Wähle mögliche Tage und Zeiten im Kalender aus",
@@ -75,4 +75,3 @@ $german = array(
 	'event_calendar:schedule_event' => "Event terminieren",
 	'event_calendar:list_polls' => "Event-Terminabstimmungen anzeigen",
 );
-add_translation("de",$german);

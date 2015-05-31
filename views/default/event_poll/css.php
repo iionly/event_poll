@@ -1,6 +1,6 @@
 .event-poll-calendar-wrapper {
-	width: 500px;
-	float: left;
+	width: 90%;
+	margin-left: 5px;
 }
 .event-poll-date-option1 {
 	margin-left: 20px;
@@ -132,11 +132,10 @@
 }
 
 #event-poll-date-container {
-	float: left;
 	border: solid 1px #AAAAAA;
-	width: 220px;
+	width: 90%;
 	margin-left: 5px;
-	height: 405px;
+	height: 300px;
 }
 
 #event-poll-date-container h3 {

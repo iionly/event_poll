@@ -23,7 +23,11 @@ if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
 
 	$subject = elgg_echo('event_poll:schedule_message:subject', array($event->title));
 	$body = $message . "\n\n" . elgg_get_site_url() . 'event_poll/vote/' . $guid;
-	notify_user($guids, elgg_get_logged_in_user_guid(), $subject, $body, null);
+	$sender_guid = elgg_get_logged_in_user_guid();
+	notify_user($guids, $sender_guid, $subject, $body, array(), 'email');
+	foreach($guids as $guid) {
+		messages_send($subject, $body, $guid, $sender_guid, 0, false, false);
+	}
 
 	system_message(elgg_echo('event_poll:schedule_message:response'));
 	forward($event->getURL());

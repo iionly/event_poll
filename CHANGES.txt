@@ -1,5 +1,13 @@
 == CHANGELOG ==
 
+=== 1.9.0 (by iionly) ===
+
+- Updated to work on Elgg 1.9 - 1.11 (requires Elgg 1.9 at minimum),
+- Use of colorbox instead of fancybox for event details popup on edit event poll page,
+- Adjustments for UI to work also with Aalborg theme,
+- Sending of on-site messages instead of on-site notifications (new on-site notifications of Elgg 1.9 won't allow any message texts but only "subject" lines which seem not enough in this case in my opinion),
+- Fix of deprecation issues.
+
 === 1.8.0 (by iionly) ===
 
 - Made to work on Elgg 1.8 (requires Elgg 1.8 at minimum),
