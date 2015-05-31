@@ -1,0 +1,9 @@
+== CHANGELOG ==
+
+=== 1.8.0 (by iionly) ===
+
+- Made to work on Elgg 1.8 (requires Elgg 1.8 at minimum),
+- Cleanup of code,
+- Revised UI (add/edit event poll view, event polls list view, event poll vote view, menu entries),
+- Editing of event polls not yet implemented but fixed code to correctly fully reset an event poll when editing the event,
+- German translations added.
