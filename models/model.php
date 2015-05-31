@@ -131,14 +131,18 @@ function event_poll_get_times_dropdown() {
 function event_poll_send_invitations($guid, $subject, $body, $invitees) {
 	$event = get_entity($guid);
 	if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
-		$site = elgg_get_site_entity();
+		// TODO as workaround simply remove any existing relationships of former invitees
+		// until the functionality for editing an event poll is implemented
+		// to ensure that no former invitees remain that are no longer included after editing
+		remove_entity_relationships($guid, 'event_poll_invitation', true);
+
 		$body .= "\n\n" . elgg_get_site_url() . 'event_poll/vote/' . $guid;
 		if (is_array($invitees) && count($invitees) > 0) {
 			foreach($invitees as $user_guid) {
 				add_entity_relationship($user_guid, 'event_poll_invitation', $guid);
 			}
 			// email invitees
-			notify_user($invitees, $site->guid, $subject, $body, null, 'email');
+			notify_user($invitees, elgg_get_logged_in_user_guid(), $subject, $body, null);
 			return true;
 		}
 	}
@@ -306,6 +310,8 @@ function event_poll_get_page_content_list($filter) {
 		'type' => 'object',
 		'subtype' => 'event_calendar',
 		'metadata_name_value_pairs' => array(array('name' => 'schedule_type', 'value' => 'poll')),
+		'offset' => get_input('offset', 0),
+		'limit' => 10,
 		'full_view' => false,
 	);
 	if ($filter == 'all') {
@@ -314,33 +320,17 @@ function event_poll_get_page_content_list($filter) {
 		$title = elgg_echo('event_poll:list:title:show_mine');
 		$options['owner_guid'] = elgg_get_logged_in_user_guid();
 	} else {
-		$title = elgg_echo('event_poll:list:title:show_others');
-		$options['wheres'] = array('e.owner_guid !=  ' . elgg_get_logged_in_user_guid());
+		$title = elgg_echo('event_poll:list:title:show_friends');
+		$friendguids = array();
+		if ($friends = get_user_friends(elgg_get_logged_in_user_guid(), "", false, 0)) {
+			foreach ($friends as $friend) {
+				$friendguids[] = $friend->getGUID();
+			}
+		}
+		$options['owner_guids'] = $friendguids;
 	}
 
 	$content = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'event_poll_list_polls');
-
-	if ($content) {
-		$subject_header = elgg_echo('event_poll:listing:header:subject');
-		$requester_header = elgg_echo('event_poll:listing:header:requester');
-		$date_header = elgg_echo('event_poll:listing:header:date');
-		$responded_header = elgg_echo('event_poll:listing:header:responded');
-		$delete_header = elgg_echo('event_poll:listing:header:delete');
-
-		$header_bit = <<<HTML
-		<div class="event-poll-listing-header-wrapper">
-			<div class="event-poll-listing-header-subject">$subject_header</div>
-			<div class="event-poll-listing-header-requester">$requester_header</div>
-			<div class="event-poll-listing-header-date">$date_header</div>
-			<div class="event-poll-listing-header-responded">$responded_header</div>
-			<div class="event-poll-listing-header-delete">$delete_header</div>
-		</div>
-HTML;
-
-		$content = $header_bit . $content;
-	} else {
-		$content = elgg_echo('event_poll:listing:no_polls');
-	}
 
 	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
 	elgg_push_breadcrumb($title);
@@ -353,19 +343,27 @@ HTML;
 }
 
 function event_poll_list_polls($es, $vars) {
+	if ($vars['count'] < 1) {
+		return '<p>' . elgg_echo('event_poll:listing:no_polls') . '</p>';
+	}
 	$r = '';
 	foreach($es as $e) {
-		$r .= elgg_view('event_poll/list_poll', array('event' => $e));
+		$r .= '<li class="elgg-item">' . elgg_view('event_poll/list_poll', array('event' => $e)) . '</li>';
 	}
 
 	$nav = elgg_view('navigation/pagination', array(
 		'offset' => get_input('offset', 0),
 		'count' => $vars['count'],
-		'limit' => 15,
+		'limit' => 10,
 		'offset_key' => 'offset',
 	));
 
-	return $r.'<div class="event-poll-pagination">'.$nav.'</div>';
+	$body = '<ul class="elgg-list elgg-list-entity">';
+	$body .= $r;
+	$body .= '</ul>';
+	$body .= '<div class="event-poll-pagination">'.$nav.'</div>';
+	
+	return $body;
 }
 
 function event_poll_vote($event, $message = '', $schedule_slot = '') {
@@ -397,7 +395,7 @@ function event_poll_vote($event, $message = '', $schedule_slot = '') {
 
 		$current_user = elgg_get_logged_in_user_entity();
 
-		if (check_entity_relationship($current_user->guid, 'event_poll_invitation', $event->guid) && $event->event_poll) {
+		if (((check_entity_relationship($current_user->guid, 'event_poll_invitation', $event->guid)) || ($current_user->guid == $event->owner_guid)) && $event->event_poll) {
 			elgg_delete_annotations(array('guid' => $event->guid, 'annotation_name' => 'event_poll_vote', 'annotation_owner_guid' => $current_user->guid, 'limit' => false));
 			$poll_options = event_poll_get_options($event);
 			foreach($poll_options as $option) {
@@ -408,9 +406,8 @@ function event_poll_vote($event, $message = '', $schedule_slot = '') {
 			}
 			add_entity_relationship($current_user->guid, 'event_poll_voted', $event->guid);
 			if ($message && $message != elgg_echo('event_poll:vote_message:explanation')) {
-				$site = elgg_get_site_entity();
-				$message = elgg_echo('event_poll:vote_message:top', array($current_user->name, $current_user->username))."\n\n".$message;
-				notify_user($event->owner_guid, $site->guid, elgg_echo('event_poll:vote_message:subject', array($event->title)), $message, null, 'email');
+				$message = elgg_echo('event_poll:vote_message:top', array($current_user->name))."\n\n".$message;
+				notify_user($event->owner_guid, elgg_get_logged_in_user_guid(), elgg_echo('event_poll:vote_message:subject', array($event->title)), $message, null);
 			}
 		}
 		return true;
@@ -483,6 +480,10 @@ function event_poll_set_time_limits($event, $poll, $event_length) {
 function elgg_poll_set_poll($guid, $poll, $event_length) {
 	$event = get_entity($guid);
 	if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
+		// TODO as workaround simply remove database entries related to any former event poll votings in case it is an existing poll that gets edited
+		// long time solution for editing polls might be to keep voting data if appropriate and former poll details are preserved
+		elgg_delete_annotations(array('guid' => $event->guid, 'annotation_name' => 'event_poll_vote', 'limit' => false));
+		remove_entity_relationships($event->guid, 'event_poll_voted', true);
 
 		// sort the poll by time within date
 		event_poll_set_time_limits($event, $poll, $event_length);
@@ -499,9 +500,10 @@ function event_poll_merge_poll_events($events, $start_time, $end_time) {
 	$options = array(
 		'type'=>'object',
 		'subtype' => 'event_calendar',
-		'metadata_name_value_pairs' => array(array('name' => 'is_event_poll', 'value' => 1),
-										array('name' => 'event_poll_start_time', 'value' => $start_time, 'operand' => '>='),
-										array('name' => 'event_poll_start_time', 'value' => $end_time, 'operand' => '<=')
+		'metadata_name_value_pairs' => array(
+			array('name' => 'is_event_poll', 'value' => 1),
+			array('name' => 'event_poll_start_time', 'value' => $start_time, 'operand' => '>='),
+			array('name' => 'event_poll_start_time', 'value' => $end_time, 'operand' => '<=')
 		),
 		'limit' => false,
 	);
@@ -613,11 +615,10 @@ function event_poll_resend_invitations($event) {
 	foreach($invitees as $invitee) {
 		$guids[] = $invitee->guid;
 	}
-	$site = elgg_get_site_entity();
 	$body .= "\n\n" . elgg_get_site_url() . 'event_poll/vote/' . $event->guid;
 	if (is_array($invitees) && count($invitees) > 0) {
 		// email invitees
-		notify_user($guids, $site->guid, $subject, $body, null, 'email');
+		notify_user($guids, elgg_get_logged_in_user_guid(), $subject, $body, null);
 	}
 	return true;
 }

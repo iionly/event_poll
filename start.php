@@ -17,6 +17,9 @@ function event_poll_init() {
 	
 	//add to the css
 	elgg_extend_view('css/elgg', 'event_poll/css');
+	
+	// entity menu
+	elgg_register_plugin_hook_handler('register', 'menu:entity', 'event_poll_entity_menu_setup');
 
 	// register actions
 	$action_path = elgg_get_plugins_path() . 'event_poll/actions/event_poll';
@@ -93,4 +96,31 @@ function event_poll_page_handler($page) {
 			return false;
 	}
 	return true;
+}
+
+function event_poll_entity_menu_setup($hook, $type, $return, $params) {
+	if (elgg_in_context('widgets')) {
+		return $return;
+	}
+
+	$entity = $params['entity'];
+	$handler = elgg_extract('handler', $params, false);
+	if ($handler != 'event_poll') {
+		return $return;
+	}
+
+	$new_return = array();
+	if ($entity->canEdit()) {
+		$options = array(
+			'name' => 'event_poll_delete',
+			'text' => elgg_view_icon('delete'),
+			'title' => elgg_echo('event_poll:delete'),
+			'href' => 'action/event_poll/delete?guid=' . $entity->guid,
+			'confirm' => elgg_echo('event_poll:deleteconfirm'),
+			'is_action' => true,
+		);
+		$new_return[] = ElggMenuItem::factory($options);
+	}
+	
+	return $new_return;
 }

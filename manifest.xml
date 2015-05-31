@@ -7,7 +7,7 @@
 	<category>content</category>
 	<blurb>Event poll</blurb>
 	<description>Allows polling user for event dates and times.</description>
-	<website>http://radagast.biz/</website>
+	<website>https://github.com/iionly</website>
 	<copyright>(C) Radagast Solutions 2012-2015, iionly 2015</copyright>
 	<license>GNU Public License version 2</license>
 	<requires>

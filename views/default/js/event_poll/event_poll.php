@@ -20,8 +20,6 @@ elgg.event_poll.init = function () {
 	$('#event-poll-length-minute').change(elgg.event_poll.handleChangeLength);
 	$('.event-poll-vote-checkbox').click(elgg.event_poll.handleVoteChoice);
 	$('.event-poll-vote-none-checkbox').click(elgg.event_poll.handleVoteNoneChoice);
-	$('.event-poll-listing-item-wrapper').mouseover(elgg.event_poll.handlePollListMouseover);
-	$('.event-poll-listing-item-wrapper').mouseout(elgg.event_poll.handlePollListMouseout);
 	$('[name="schedule_slot"][type=radio]').change(elgg.event_poll.handleTimeSelection);
 	elgg.event_poll.handleTimeSelection();
 	elgg.event_poll.setupCalendar();
@@ -31,14 +29,6 @@ elgg.event_poll.init = function () {
 		menu = autocomplete.menu;
 		menu.activate( $.Event({ type: "mouseenter" }), menu.element.children().first() );
 		});
-}
-
-elgg.event_poll.handlePollListMouseover = function(e) {
-	$("div",this).addClass('event-poll-hovered');
-}
-
-elgg.event_poll.handlePollListMouseout = function(e) {
-	$("div",this).removeClass('event-poll-hovered');
 }
 
 elgg.event_poll.handleVoteChoice = function(e) {
@@ -52,13 +42,22 @@ elgg.event_poll.handleVoteNoneChoice = function(e) {
 elgg.event_poll.handleTimeSelection = function() {
 	if ($('[name="schedule_slot"][type=radio]:checked').val()) {
 		$('#event-poll-vote-event-data-wrapper').show();
+		$(".event-calendar-edit-reminder-wrapper").show();
+		$(".event-calendar-edit-form-membership-block").show();
+		$(".event-calendar-edit-form-share-block").show();
 	}
 }
 
 elgg.event_poll.setupCalendar = function() {
-	if ($('#calendar').length > 0) {
+	var loadFullCalendar = function() {
+		var locale = $.datepicker.regional[elgg.get_language()];
+
+		if (!locale) {
+			locale = $.datepicker.regional[''];
+		}
+
 		$('#calendar').fullCalendar({
-			header: {
+				header: {
 				left: 'prev,next today',
 				center: 'title',
 				right: '',
@@ -73,7 +72,30 @@ elgg.event_poll.setupCalendar = function() {
 			dayClick: elgg.event_poll.handleDayClick,
 			eventClick : elgg.event_poll.handleEventClick,
 			eventAfterRender : elgg.event_poll.handleEventRender, 
-			events: elgg.event_poll.handleGetEvents
+			events: elgg.event_poll.handleGetEvents,
+			isRTL:  locale.isRTL,
+			firstDay: locale.firstDay,
+			monthNames: locale.monthNames,
+			monthNamesShort: locale.monthNamesShort,
+			dayNames: locale.dayNames,
+			dayNamesShort: locale.dayNamesShort,
+			buttonText: {
+				today: locale.currentText,
+				month: elgg.echo('event_calendar:month_label'),
+				week: elgg.echo('event_calendar:week_label'),
+				day: elgg.echo('event_calendar:day_label')
+			},
+			timeFormat: $('#event-poll-time-format').val()
+		});
+	}
+
+	if ($('#calendar').length > 0) {
+		elgg.get({
+			url: '/vendors/jquery/i18n/jquery.ui.datepicker-' + elgg.get_language() + '.js',
+			dataType: "script",
+			cache: true,
+			success: loadFullCalendar,
+			error: loadFullCalendar, // english language is already loaded
 		});
 	}
 }
@@ -161,7 +183,7 @@ elgg.event_poll.formatDate = function(date) {
 	mf = m < 10 ? '0' + m : m;
 	var lgth_m = $('#event-poll-length-minute').val();
 	var lgth_h = $('#event-poll-length-hour').val();
-	if($('#event-poll-time-format').val() == 12) {
+	if($('#event-poll-time-format').val() == '12') {
 		if (h == 0) {
 			t = "12:"+mf+" am";
 		} else if (h == 12) {
@@ -183,7 +205,7 @@ elgg.event_poll.formatDate = function(date) {
 		var h2 = date2.getHours();
 		var m2 = date2.getMinutes();
 		mf2 = m2 < 10 ? '0' + m2 : m2;
-		if($('#event-poll-time-format').val() == 12) {
+		if($('#event-poll-time-format').val() == '12') {
 			if (h2 == 0) {
 				t2 = "12:"+mf2+" am";
 			} else if (h2 == 12) {
@@ -234,14 +256,20 @@ elgg.event_poll.formatTime = function(d) {
 	return hours+":"+minutes;
 }
 
-elgg.event_poll.handleGetEvents = function(start, end, callback) {	
+elgg.event_poll.handleGetEvents = function(start, end, callback) {
 	var start_date = elgg.event_poll.getISODate(start);
 	var end_date = elgg.event_poll.getISODate(end);
 	var url = "event_calendar/get_fullcalendar_events/"+start_date+"/"+end_date+"/all/<?php echo $vars['group_guid']; ?>";
 	elgg.getJSON(url, {success: function(events) {
+			//var guid = $('#event-poll-event-guid').val();
+			//$.each(events,function(k,e) {if (e.guid == guid) { e.className = 'event-poll-new-class'; }});
+			//callback(events);
+			// TODO for now do not display former event slot options when editing an event poll as they are not preserved anyway
+			// if the editing of event polls is revised this would have to be revised too
 			var guid = $('#event-poll-event-guid').val();
-			$.each(events,function(k,e) {if (e.guid == guid) { e.className = 'event-poll-new-class'; }});
-			callback(events);
+			var other_events = new Array();
+			$.each(events,function(k,e) {if (e.guid != guid) { other_events[k] = e; }});
+			callback(other_events);
 		}
 	});
 }
@@ -315,9 +343,9 @@ elgg.event_poll.handleStage2 = function(e) {
 	var tb = '<table id="event-poll-date-times-table"><tr>';
 	tb += '<th class="event-poll-date-times-table-date">&nbsp;</th>';
 	// TODO - make the number of time slots configurable
-	tb += '<th class="event-poll-date-times-table-time"><?php echo elgg_echo("event_poll:time1"); ?></th>';
-	tb += '<th class="event-poll-date-times-table-time"><?php echo elgg_echo("event_poll:time2"); ?></th>';
-	tb += '<th class="event-poll-date-times-table-time"><?php echo elgg_echo("event_poll:time3"); ?></th>';
+	tb += '<th class="event-poll-date-times-table-time">'+elgg.echo("event_poll:time1")+'</th>';
+	tb += '<th class="event-poll-date-times-table-time">'+elgg.echo("event_poll:time2")+'</th>';
+	tb += '<th class="event-poll-date-times-table-time">'+elgg.echo("event_poll:time3")+'</th>';
 	tb += '</tr></table>';
 	// insert the new table
 	$('#event-poll-date-times-table-wrapper').prepend(tb);
@@ -387,7 +415,7 @@ elgg.event_poll.populateReadOnlyTable = function() {
 	tb += '<th class="event-poll-date-times-table-date">&nbsp;</th>';
 	// TODO - make the number of time slots configurable
 	for (var i=1; i <= max_time_count; i++) {
-		tb += '<th class="event-poll-date-times-table-time">Time '+i+'</th>';
+		tb += '<th class="event-poll-date-times-table-time">'+elgg.echo("event_poll:time"+i)+'</th>';
 	}
 
 	tb += '</tr></table>';
@@ -526,10 +554,11 @@ elgg.event_poll.removeOption2 = function(e) {
 }
 
 elgg.event_poll.sendPoll = function(e) {
-	d = {	guid : $('#event-poll-event-guid').val(),
-			subject : $('[name="invitation_subject"]').val(),
-			body : $('[name="invitation_body"]').val(),
-			invitees : $('input[name="members[]"]').map(function(){return $(this).val();}).get()
+	d = {
+		guid : $('#event-poll-event-guid').val(),
+		subject : $('[name="invitation_subject"]').val(),
+		body : $('[name="invitation_body"]').val(),
+		invitees : $('input[name="members[]"]').map(function(){return $(this).val();}).get()
 	};
 	elgg.action('event_poll/invite', {data: d, success: elgg.event_poll.sendPollResponse});
 	//$('input[name="members[]"]').parent().remove();

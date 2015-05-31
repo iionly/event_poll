@@ -21,11 +21,11 @@ $tabs ['mine'] = array(
 	'selected' => ($filter_context == 'mine'),
 	'priority' => 300,
 );
-$tabs['other'] = array(
-	'name' => 'other',
-	'text' => elgg_echo('event_poll:list:show_other'),
-	'href' =>  "$url_start/other",
-	'selected' => ($filter_context == 'other'),
+$tabs['friends'] = array(
+	'name' => 'friends',
+	'text' => elgg_echo('event_poll:list:show_friends'),
+	'href' =>  "$url_start/friends",
+	'selected' => ($filter_context == 'friends'),
 	'priority' => 400,
 );
 
