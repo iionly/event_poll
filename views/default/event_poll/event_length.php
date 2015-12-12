@@ -14,7 +14,7 @@ for ($i=0; $i<60; $i += 5) {
 	}
 }
 
-echo elgg_view('input/dropdown', array('id' => 'event-poll-length-hour', 'name' => 'hour_length', 'value' => 1, 'options_values' => $hours));
+echo elgg_view('input/select', array('id' => 'event-poll-length-hour', 'name' => 'hour_length', 'value' => 1, 'options_values' => $hours));
 echo elgg_echo('event_poll:hours_and');
-echo elgg_view('input/dropdown', array('id' => 'event-poll-length-minute', 'name' => 'minute_length', 'value' => 0, 'options_values' => $minutes));
+echo elgg_view('input/select', array('id' => 'event-poll-length-minute', 'name' => 'minute_length', 'value' => 0, 'options_values' => $minutes));
 echo elgg_echo('event_poll:minutes');

@@ -1,7 +1,7 @@
 <?php
 
-elgg_load_js('elgg.event_poll');
-elgg_load_js('elgg.full_calendar');
+elgg_require_js('event_poll/event_poll');
+elgg_require_js('event_calendar/fullcalendar');
 
 $event = $vars['event'];
 $container = get_entity($event->container_guid);
@@ -33,9 +33,10 @@ if (!$event_calendar_time_format) {
 
 <h2 id ="event-poll-title1"><?php echo elgg_echo('event_poll:select_days:title'); ?></h2>
 <h2 id ="event-poll-title2"><?php echo elgg_echo('event_poll:select_times:title'); ?></h2>
-<h2 id ="event-poll-title3"><?php echo elgg_echo('event_poll:days_and_times:title').' <a id="event-poll-edit-link" href="javascript:void(0)">'.elgg_echo('event_poll:edit').'</a>'; ?></h2>
+<h2 id ="event-poll-title3"><?php echo elgg_echo('event_poll:days_and_times:title').' <a id="event-poll-edit-link" href="#">'.elgg_echo('event_poll:edit').'</a>'; ?></h2>
 
 <input type="hidden" id="event-poll-event-guid" value="<?php echo $event->guid; ?>" />
+<input type="hidden" id="event-poll-event-groupguid" value="<?php echo $vars['group_guid']; ?>" />
 <?php echo elgg_view('input/hidden', array('id' => 'event-poll-event-title', 'value' => $event->title)); ?>
 <?php echo elgg_view('input/hidden', array('id' => 'event-poll-event-url', 'value' => elgg_get_site_url().'ajax/view/event_calendar/popup?guid='.$event->guid)); ?>
 <input type="hidden" id="event-poll-month-number" value="<?php echo date('n')-1; ?>" />

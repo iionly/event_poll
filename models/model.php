@@ -1,7 +1,7 @@
 <?php
 
 function event_poll_get_page_content_vote($guid) {
-	elgg_load_js('elgg.event_poll');
+	elgg_require_js('event_poll/event_poll');
 	$vars = array();
 	$vars['id'] = 'event-poll-vote';
 	$vars['name'] = 'event_poll_vote';
@@ -36,7 +36,7 @@ function event_poll_get_page_content_vote($guid) {
 }
 
 function event_poll_get_page_content_schedule($guid) {
-	elgg_load_js('elgg.event_poll');
+	elgg_require_js('event_poll/event_poll');
 	$vars = array();
 	$vars['id'] = 'event-poll-schedule';
 	$vars['name'] = 'event_poll_schedule';
@@ -71,7 +71,7 @@ function event_poll_get_page_content_schedule($guid) {
 }
 
 function event_poll_get_page_content_edit($page_type,$guid) {
-	elgg_load_js('elgg.event_poll');
+	elgg_require_js('event_poll/event_poll');
 	elgg_load_js('lightbox');
 	elgg_load_css('lightbox');
 
@@ -307,7 +307,7 @@ function event_poll_display_invitees($event_poll, $times_choices, $invitees, $vo
 
 function event_poll_get_page_content_list($filter) {
 	elgg_load_library('elgg:event_calendar');
-	elgg_load_js('elgg.event_poll');
+	elgg_require_js('event_poll/event_poll');
 	//event_calendar_handle_event_poll_add_items();
 	$filter_override = elgg_view('event_poll/filter_menu', array('filter' => $filter));
 	$options = array(

@@ -1,6 +1,17 @@
-== CHANGELOG ==
+Changelog
+=========
 
-=== 1.9.0 (by iionly) ===
+1.10.0
+------
+
+- Requires Elgg 1.10 at minimum,
+- Requires version 1.10.3 of Event Calendar plugin at minimum,
+- Conversion all JS code to AMD modules,
+- composer.json added,
+- Usage of input/dropdown changed to input/select.
+
+1.9.0
+-----
 
 - Updated to work on Elgg 1.9 - 1.11 (requires Elgg 1.9 at minimum),
 - Use of colorbox instead of fancybox for event details popup on edit event poll page,
@@ -8,7 +19,8 @@
 - Sending of on-site messages instead of on-site notifications (new on-site notifications of Elgg 1.9 won't allow any message texts but only "subject" lines which seem not enough in this case in my opinion),
 - Fix of deprecation issues.
 
-=== 1.8.0 (by iionly) ===
+1.8.0
+-----
 
 - Made to work on Elgg 1.8 (requires Elgg 1.8 at minimum),
 - Cleanup of code,
