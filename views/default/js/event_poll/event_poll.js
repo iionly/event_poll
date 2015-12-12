@@ -90,13 +90,11 @@ define(function(require) {
 		}
 
 		if ($('#calendar').length > 0) {
-			elgg.get({
-				url: '/vendors/jquery/i18n/jquery.ui.datepicker-' + elgg.get_language() + '.js',
-				dataType: "script",
-				cache: true,
-				success: loadFullCalendar,
-				error: loadFullCalendar, // english language is already loaded
-			});
+			var deps = ['jquery-ui', 'jquery-ui/datepicker'];
+			if (elgg.get_language() != 'en') {
+				deps.push('jquery-ui/i18n/datepicker-'+ elgg.get_language() + '.min');
+			}
+			require(deps, loadFullCalendar);
 		}
 	}
 
@@ -122,7 +120,7 @@ define(function(require) {
 		var stage = $('#event-poll-stage').val();
 		if (stage == 1) {
 			var h = '<div class="event-poll-date-options">';
-			h += '<a class="event-poll-date-option1-remove" href="#"><span class="elgg-icon elgg-icon-delete "></span></a>';
+			h += '<a class="event-poll-date-option1-remove" href="#"><span class="elgg-icon fa fa-times "></span></a>';
 			h += '<span class="event-poll-human-date">'+formatDate(date)+'</span>';
 			h += '<span class="event-poll-iso-date">'+getISODate(date)+'</span>';
 			h += '<span class="event-poll-click-id">'+click_id+'</span>';
@@ -492,7 +490,7 @@ define(function(require) {
 		var iso = $(this).find('.event-poll-iso-date').html();
 		var t = '<tr class="event-poll-date-times-table-row">';
 		t += '<td>';
-		t += '<a class="event-poll-date-option2-remove" href="#"><span class="elgg-icon elgg-icon-delete "></span></a>';
+		t += '<a class="event-poll-date-option2-remove" href="#"><span class="elgg-icon fa fa-times "></span></a>';
 		t += '<span class="event-poll-human-date">'+human+'</span><span class="event-poll-iso-date">'+iso+'</span></td>';
 		t += '<td class="event-poll-times-dropdown"></td><td class="event-poll-times-dropdown"></td><td class="event-poll-times-dropdown"></td>';
 		t += '</tr>';

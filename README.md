@@ -1,7 +1,7 @@
-Event Poll plugin for Elgg 1.10 - 1.12
-======================================
+Event Poll plugin for Elgg 2.X
+==============================
 
-Version: 1.10.0  
+Version: 2.0.0  
 Released: 2015-12-12  
 Contact: iionly@gmx.de  
 License: GNU General Public License version 2  
