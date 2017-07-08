@@ -3,17 +3,17 @@
 	<name>Event Poll</name>
 	<id>event_poll</id>
 	<author>Kevin Jardine &lt;kevin@radagast.biz&gt;, iionly</author>
-	<version>2.0.0</version>
+	<version>2.3.1</version>
 	<category>third-party</category>
 	<category>content</category>
 	<blurb>Event poll</blurb>
 	<description>Allows polling user for event dates and times.</description>
 	<website>https://github.com/iionly</website>
-	<copyright>(C) Radagast Solutions 2012-2015, iionly 2015</copyright>
+	<copyright>(C) Radagast Solutions 2012, iionly 2015</copyright>
 	<license>GNU Public License version 2</license>
 	<requires>
 		<type>elgg_release</type>
-		<version>2.0.0-beta.1</version>
+		<version>2.3.0</version>
 	</requires>
 	<requires>
 		<type>plugin</type>

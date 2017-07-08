@@ -1,131 +1,8 @@
 <?php
 
-function event_poll_get_page_content_vote($guid) {
-	elgg_require_js('event_poll/event_poll');
-	$vars = array();
-	$vars['id'] = 'event-poll-vote';
-	$vars['name'] = 'event_poll_vote';
-	// just in case a feature adds an image upload
-	$vars['enctype'] = 'multipart/form-data';
-
-	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
-
-	$body_vars = array();
-	$event = get_entity((int)$guid);
-	if (elgg_instanceof($event, 'object', 'event_calendar')) {
-		$body_vars['event'] = $event;
-		$body_vars['form_data'] = event_poll_prepare_vote_form_vars($event);
-		$event_container = get_entity($event->container_guid);
-		if (elgg_instanceof($event_container, 'group')) {
-			elgg_push_breadcrumb($event_container->name, 'event_calendar/group/' . $event_container->getGUID());
-		}
-		elgg_push_breadcrumb($event->title, $event->getURL());
-
-		$title = elgg_echo('event_poll:vote_title');
-		elgg_push_breadcrumb(elgg_echo('event_poll:vote_title'));
-		$content = elgg_view_form('event_poll/vote', $vars, $body_vars);
-	} else {
-		$content = elgg_echo('event_poll:error_event_poll_edit');
-	}
-
-	$params = array('title' => $title, 'content' => $content, 'filter' => '');
-
-	$body = elgg_view_layout("content", $params);
-
-	return elgg_view_page($title,$body);
-}
-
-function event_poll_get_page_content_schedule($guid) {
-	elgg_require_js('event_poll/event_poll');
-	$vars = array();
-	$vars['id'] = 'event-poll-schedule';
-	$vars['name'] = 'event_poll_schedule';
-	// just in case a feature adds an image upload
-	$vars['enctype'] = 'multipart/form-data';
-
-	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
-
-	$body_vars = array();
-	$event = get_entity((int)$guid);
-	if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
-		$body_vars['event'] = $event;
-		$event_container = get_entity($event->container_guid);
-		if (elgg_instanceof($event_container, 'group')) {
-			elgg_push_breadcrumb($event_container->name, 'event_calendar/group/' . $event_container->getGUID());
-		}
-		elgg_push_breadcrumb($event->title, $event->getURL());
-
-		$title = elgg_echo('event_poll:schedule_title', array($event->title));
-		elgg_push_breadcrumb($title);
-		$content = elgg_view_form('event_poll/schedule', $vars, $body_vars);
-		$content .= elgg_view_form('event_poll/schedule_message', $vars, $body_vars);
-	} else {
-		$content = elgg_echo('event_poll:error_event_poll_edit');
-	}
-
-	$params = array('title' => $title, 'content' => $content, 'filter' => '');
-
-	$body = elgg_view_layout("content", $params);
-
-	return elgg_view_page($title,$body);
-}
-
-function event_poll_get_page_content_edit($page_type,$guid) {
-	elgg_require_js('event_poll/event_poll');
-	elgg_load_js('lightbox');
-	elgg_load_css('lightbox');
-
-	$vars = array();
-	$vars['id'] = 'event-poll-edit';
-	$vars['name'] = 'event_poll_edit';
-	// just in case a feature adds an image upload
-	$vars['enctype'] = 'multipart/form-data';
-
-	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
-
-	$body_vars = array();
-	$event = get_entity((int)$guid);
-	if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
-		$body_vars['event'] = $event;
-		$body_vars['form_data'] =  event_poll_prepare_edit_form_vars($event);
-		// start date is the start of the month for this event
-		$body_vars['start_date'] = gmdate("Y-m",$event->start_date)."-1";
-
-		$event_container = get_entity($event->container_guid);
-		if (elgg_instanceof($event_container, 'group')) {
-			elgg_push_breadcrumb($event_container->name, 'event_calendar/group/' . $event_container->getGUID());
-		}
-		elgg_push_breadcrumb($event->title, $event->getURL());
-
-		if ($page_type == 'edit') {
-			$title = elgg_echo('event_poll:edit_title');
-			elgg_push_breadcrumb(elgg_echo('event_poll:edit_title'));
-			$content = elgg_view_form('event_poll/edit', $vars, $body_vars);
-		} else {
-			$title = elgg_echo('event_poll:add_title');
-			elgg_push_breadcrumb(elgg_echo('event_poll:add_title'));
-			$content = elgg_view_form('event_poll/edit', $vars, $body_vars);
-		}
-
-	} else {
-		$title = elgg_echo('event_poll:error_title');
-		$content = elgg_echo('event_poll:error_event_poll_edit');
-	}
-
-	$params = array('title' => $title, 'content' => $content, 'filter' => '');
-
-	$body = elgg_view_layout("content", $params);
-
-	return elgg_view_page($title,$body);
-}
-
 function event_poll_prepare_edit_form_vars($event) {
 	// TODO: add content here
 	return array();
-}
-
-function event_poll_get_times_dropdown() {
-	return elgg_view('input/timepicker', array('name' => 'event_poll_time', 'value' => ''));
 }
 
 function event_poll_send_invitations($guid, $subject, $body, $invitees) {
@@ -303,48 +180,6 @@ function event_poll_display_invitees($event_poll, $times_choices, $invitees, $vo
 	}
 
 	return array($table_rows,$others);
-}
-
-function event_poll_get_page_content_list($filter) {
-	elgg_load_library('elgg:event_calendar');
-	elgg_require_js('event_poll/event_poll');
-	//event_calendar_handle_event_poll_add_items();
-	$filter_override = elgg_view('event_poll/filter_menu', array('filter' => $filter));
-	$options = array(
-		'type' => 'object',
-		'subtype' => 'event_calendar',
-		'metadata_name_value_pairs' => array(array('name' => 'schedule_type', 'value' => 'poll')),
-		'offset' => get_input('offset', 0),
-		'limit' => 10,
-		'full_view' => false,
-	);
-	if ($filter == 'all') {
-		$title = elgg_echo('event_poll:list:title:show_all');
-	} else if ($filter == 'mine') {
-		$title = elgg_echo('event_poll:list:title:show_mine');
-		$options['owner_guid'] = elgg_get_logged_in_user_guid();
-	} else {
-		$title = elgg_echo('event_poll:list:title:show_friends');
-		$friendguids = array();
-		$logged_in_user = elgg_get_logged_in_user_entity();
-		if ($friends = $logged_in_user->getFriends(array('limit' => false))) {
-			foreach ($friends as $friend) {
-				$friendguids[] = $friend->getGUID();
-			}
-		}
-		$options['owner_guids'] = $friendguids;
-	}
-
-	$content = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'event_poll_list_polls');
-
-	elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
-	elgg_push_breadcrumb($title);
-
-	$params = array('title' => $title, 'content' => $content, 'filter_override' => $filter_override);
-
-	$body = elgg_view_layout("content", $params);
-
-	return elgg_view_page($title, $body);
 }
 
 function event_poll_list_polls($es, $vars) {
@@ -535,18 +370,6 @@ function event_poll_merge_poll_events($events, $start_time, $end_time) {
 	}
 
 	return $events;
-}
-
-function event_poll_handle_event_poll_add_items($group_guid = 0) {
-	if ($group_guid) {
-		$url_schedule_event =  "event_calendar/schedule/$group_guid";
-	} else {
-		$url_schedule_event =  "event_calendar/schedule";
-	}
-
-	$item = new ElggMenuItem('event-calendar-1schedule', elgg_echo('event_calendar:schedule_event'), $url_schedule_event);
-	$item->setSection('event_poll');
-	elgg_register_menu_item('page', $item);
 }
 
 // TODO: make human date configurable

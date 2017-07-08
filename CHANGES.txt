@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.3.1
+-----
+
+- Minimum Elgg version required is 2.3.0,
+- No longer load Elgg's lightbox JS and CSS because they are loaded by core on all pages now anyway,
+- No longer use deprecated 'page', 'setup' plugin hook for registering menu items,
+- Move views used in pagehandler out of model.php into resource views.
+
 2.0.0
 -----
 
