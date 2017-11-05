@@ -1,12 +1,14 @@
 <?php
 
+elgg_load_library('elgg:event_calendar');
 elgg_load_library('elgg:event_poll');
 
 $event = $vars['event'];
-$owner = $event->getOwnerEntity();
-echo '<h3>' . elgg_echo('event_poll:vote_subtitle', array($event->title, $owner->name)) . '</h3>';
 
-if ($event->event_poll) {
+if ($event && $event->event_poll) {
+	$owner = $event->getOwnerEntity();
+	echo '<h3>' . elgg_echo('event_poll:vote_subtitle', [$event->title, $owner->name]) . '</h3>';
+
 	$event_poll = unserialize($event->event_poll);
 
 	if (is_array($event_poll) && count($event_poll) > 0) {
@@ -14,7 +16,11 @@ if ($event->event_poll) {
 		if ((!($current_schedule_slot = event_poll_get_current_schedule_slot($event))) || $event->canEdit()) {
 			echo '<p class="mtm">' . elgg_echo('event_poll:vote_explanation') . '</p>';
 	
-			echo elgg_view('input/hidden', array('name' => 'event_guid', 'value' => $event->guid));
+			echo elgg_view_field([
+				'#type' => 'hidden',
+				'name' => 'event_guid',
+				'value' => $event->guid,
+			]);
 			$current_user = elgg_get_logged_in_user_entity();
 			$times_choices = event_poll_get_times($event->guid);
 			$invitees = event_poll_get_invitees($event->guid);
@@ -37,18 +43,18 @@ if ($event->event_poll) {
 					} else {
 						$name = "{$iso_date}__{$minutes}";
 						if (isset($times_choices[$current_user->guid]) && in_array($name, $times_choices[$current_user->guid])) {
-							$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', array('class' => 'event-poll-vote-checkbox', 'name' => $name, 'value' => 1, 'checked' => 'checked')) . '</td>';
+							$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', ['class' => 'event-poll-vote-checkbox', 'name' => $name, 'value' => 1, 'checked' => 'checked']) . '</td>';
 						} else {
-							$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', array('class' => 'event-poll-vote-checkbox', 'name' => $name, 'value' => 1)) . '</td>';
+							$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', ['class' => 'event-poll-vote-checkbox', 'name' => $name, 'value' => 1]) . '</td>';
 						}
 					}
 				}
 			}
 			// add the none option
 			if (isset($times_choices[$current_user->guid]) && in_array('none', $times_choices[$current_user->guid])) {
-				$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', array('class' => 'event-poll-vote-none-checkbox', 'name' => 'none', 'value' => 1, 'checked' => 'checked')) . '</td>';
+				$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', ['class' => 'event-poll-vote-none-checkbox', 'name' => 'none', 'value' => 1, 'checked' => 'checked']) . '</td>';
 			} else {
-				$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', array('class' => 'event-poll-vote-none-checkbox', 'name' => 'none', 'value' => 1)).'</td>';
+				$table_rows .= '<td class="event-poll-vote-current-td">' . elgg_view('input/checkbox', ['class' => 'event-poll-vote-none-checkbox', 'name' => 'none', 'value' => 1]).'</td>';
 			}
 			$table_rows .= '</tr>';
 
@@ -105,13 +111,18 @@ if ($event->event_poll) {
 				$html .= '</div></div>';
 			} else {
 				$html .= '<div id="event-poll-vote-message-wrapper">';
-				$html .= '<label>' . elgg_echo('event_poll:vote_message:label') . '</label>';
-				$html .= elgg_view('input/plaintext', array('id' => 'event-poll-vote-message', 'name' => 'message', 'value' => elgg_echo('event_poll:vote_message:explanation')));
+				$html .= elgg_view_field([
+					'#type' => 'plaintext',
+					'#label' => elgg_echo('event_poll:vote_message:label'),
+					'name' => 'message',
+					'id' => 'event-poll-vote-message',
+					'value' => elgg_echo('event_poll:vote_message:explanation'),
+				]);
 				$html .= '</div></div>';
 			}
 
 			$html .= '<div id="event-poll-vote-button-wrapper">';
-			$html .= elgg_view('input/submit', array('value' => elgg_echo('event_poll:vote_button')));
+			$html .= elgg_view('input/submit', ['value' => elgg_echo('event_poll:vote_button')]);
 			$html .= '</div>';
 
 			echo $html;

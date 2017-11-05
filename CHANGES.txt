@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.3.2
+-----
+
+- Requires Event Calendar version 2.3.2,
+- Fix of race condition on AMD module loading,
+- Fix of loading Event Calendar API library where required,
+- Code cleanup,
+- Forms layout polished.
+
 2.3.1
 -----
 

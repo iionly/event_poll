@@ -6,7 +6,7 @@ $message = get_input('message');
 
 $event = get_entity($guid);
 if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
-	$guids = array();
+	$guids = [];
 	$invitees = event_poll_get_invitees($guid);
 	if ($message_option == 'all') {
 		foreach ($invitees as $user) {
@@ -21,10 +21,10 @@ if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
 		}
 	}
 
-	$subject = elgg_echo('event_poll:schedule_message:subject', array($event->title));
+	$subject = elgg_echo('event_poll:schedule_message:subject', [$event->title]);
 	$body = $message . "\n\n" . elgg_get_site_url() . 'event_poll/vote/' . $guid;
 	$sender_guid = elgg_get_logged_in_user_guid();
-	notify_user($guids, $sender_guid, $subject, $body, array(), 'email');
+	notify_user($guids, $sender_guid, $subject, $body, [], 'email');
 	foreach($guids as $guid) {
 		messages_send($subject, $body, $guid, $sender_guid, 0, false, false);
 	}

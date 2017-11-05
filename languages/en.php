@@ -1,6 +1,7 @@
 <?php
 
-return array(
+return [
+	'event_poll' => "Scheduling poll",
 	'event_poll:add_title' => 'Create scheduling poll',
 	'event_poll:edit_title' => 'Edit scheduling poll',
 	'event_poll:select_days:title' => "Click on calendar to select possible dates and times",
@@ -12,6 +13,7 @@ return array(
 	'event_poll:choose_invitees:title' => "Choose invitees",
 	'event_poll:message_to_invitees:title' => "Message to invitees",
 	'event_poll:subject:label' => "Subject",
+	'event_poll:body:label' => "Body",
 	'event_poll:invitation_subject' => 'Scheduling an event - %s',
 	'event_poll:invitation_body' => 'Please click the link below and let us know when you are available for this event.',
 	'event_poll:reschedule_subject' => 'Rescheduling an event - %s',
@@ -74,4 +76,4 @@ return array(
 	'event_calendar:add_event' => "Add event",
 	'event_calendar:schedule_event' => "Schedule event",
 	'event_calendar:list_polls' => "List event polls",
-);
+];

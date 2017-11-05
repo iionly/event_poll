@@ -31,7 +31,7 @@ function event_poll_init() {
 
 function event_poll_pagemenu($hook, $type, $return, $params) {
 	$context = elgg_get_context();
-	if (!in_array($context, array('event_calendar', 'event_calendar:view', 'event_poll'))) {
+	if (!in_array($context, ['event_calendar', 'event_calendar:view', 'event_poll'])) {
 		return $return;
 	}
 
@@ -126,16 +126,16 @@ function event_poll_entity_menu_setup($hook, $type, $return, $params) {
 		return $return;
 	}
 
-	$new_return = array();
+	$new_return = [];
 	if ($entity->canEdit()) {
-		$options = array(
+		$options = [
 			'name' => 'event_poll_delete',
 			'text' => elgg_view_icon('delete'),
 			'title' => elgg_echo('event_poll:delete'),
 			'href' => 'action/event_poll/delete?guid=' . $entity->guid,
 			'confirm' => elgg_echo('event_poll:deleteconfirm'),
 			'is_action' => true,
-		);
+		];
 		$new_return[] = ElggMenuItem::factory($options);
 	}
 	

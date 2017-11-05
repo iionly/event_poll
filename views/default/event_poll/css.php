@@ -1,3 +1,6 @@
+<?php
+?>
+
 .event-poll-calendar-wrapper {
 	width: 90%;
 	margin-left: 5px;

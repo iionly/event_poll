@@ -1,6 +1,7 @@
 <?php
 
-return array(
+return [
+	'event_poll' => "Event-Terminabstimmung",
 	'event_poll:add_title' => 'Event-Terminabstimmung hinzufügen',
 	'event_poll:edit_title' => 'Event-Terminabstimmung bearbeiten',
 	'event_poll:select_days:title' => "Wähle mögliche Tage und Zeiten im Kalender aus",
@@ -12,6 +13,7 @@ return array(
 	'event_poll:choose_invitees:title' => "Eingeladene auswählen",
 	'event_poll:message_to_invitees:title' => "Nachricht an Eingeladene",
 	'event_poll:subject:label' => "Betreff",
+	'event_poll:body:label' => "Nachricht",
 	'event_poll:invitation_subject' => 'Terminierung eines Events - %s',
 	'event_poll:invitation_body' => 'Bitte folge dem unten aufgeführten Link und lass uns wissen, wann Du für dieses Event Zeit hast.',
 	'event_poll:reschedule_subject' => 'Event neu terminieren - %s',
@@ -74,4 +76,4 @@ return array(
 	'event_calendar:add_event' => "Event hinzufügen",
 	'event_calendar:schedule_event' => "Event terminieren",
 	'event_calendar:list_polls' => "Event-Terminabstimmungen anzeigen",
-);
+];

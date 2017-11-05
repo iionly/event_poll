@@ -8,12 +8,12 @@ $body = get_input('body');
 $invitees = get_input('invitees');
 
 if (event_poll_send_invitations($guid, $subject, $body, $invitees)) {
-	$result = array('success'=>true, 'msg' => elgg_echo('event_poll:send_invitations:success'));
+	$result = ['success'=>true, 'msg' => elgg_echo('event_poll:send_invitations:success')];
 } else {
 	if (!$invitees) {
-		$result = array('success'=>false, 'msg' => elgg_echo('event_poll:send_invitations:no_invitees'));
+		$result = ['success'=>false, 'msg' => elgg_echo('event_poll:send_invitations:no_invitees')];
 	} else {
-		$result = array('success'=>false, 'msg' => elgg_echo('event_poll:send_invitations:error'));
+		$result = ['success'=>false, 'msg' => elgg_echo('event_poll:send_invitations:error')];
 	}
 }
 

@@ -12,7 +12,7 @@ $vars['enctype'] = 'multipart/form-data';
 
 elgg_push_breadcrumb(elgg_echo('item:object:event_calendar'), 'event_calendar/list');
 
-$body_vars = array();
+$body_vars = [];
 $event = get_entity((int)$guid);
 if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
 	$body_vars['event'] = $event;
@@ -41,7 +41,11 @@ if (elgg_instanceof($event, 'object', 'event_calendar') && $event->canEdit()) {
 	$content = elgg_echo('event_poll:error_event_poll_edit');
 }
 
-$params = array('title' => $title, 'content' => $content, 'filter' => '');
+$params = [
+	'title' => $title,
+	'content' => $content,
+	'filter' => '',
+];
 
 $body = elgg_view_layout("content", $params);
 

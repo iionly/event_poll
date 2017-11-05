@@ -1,23 +1,24 @@
 <?php
 
+elgg_load_library('elgg:event_calendar');
 elgg_load_library('elgg:event_poll');
 
 $event = $vars['event'];
 
-$title = elgg_view('output/url', array(
+$title = elgg_view('output/url', [
 	'href' => 'event_poll/vote/'.$event->guid,
 	'text' => $event->title,
 	'is_trusted' => true,
-));
+]);
 
 $owner = $event->getOwnerEntity();
 $owner_icon = elgg_view_entity_icon($owner, 'tiny');
-$owner_link = elgg_view('output/url', array(
+$owner_link = elgg_view('output/url', [
 	'href' => "event_calendar/owner/$owner->username",
 	'text' => $owner->name,
 	'is_trusted' => true,
-));
-$author_text = elgg_echo('byline', array($owner_link));
+]);
+$author_text = elgg_echo('byline', [$owner_link]);
 $date = elgg_view_friendly_time($event->time_created);
 
 $subtitle = "$author_text $date";
@@ -39,22 +40,22 @@ $body .= '</div>';
 if (elgg_in_context('widgets') || !$event->canEdit()) {
 	$metadata = '';
 } else {
-	$metadata = elgg_view_menu('entity', array(
+	$metadata = elgg_view_menu('entity', [
 		'entity' => $event,
 		'handler' => 'event_poll',
 		'sort_by' => 'priority',
 		'class' => 'elgg-menu-hz',
-	));
+	]);
 }
 
-$params = array(
+$params = [
 	'entity' => $event,
 	'title' => $title,
 	'metadata' => $metadata,
 	'subtitle' => $subtitle,
 	'content' => $body,
-	'tags' => false
-);
+	'tags' => false,
+];
 $params = $params + $vars;
 $list_body = elgg_view('object/elements/summary', $params);
 
